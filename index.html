@@ -1410,20 +1410,24 @@ async function loginWithOtp(){
   if (!isIranMobile(phone)) { alert('شماره موبایل معتبر ایران وارد کنید.'); return false; }
   _authBusy = true;
   try{
-    const {error} = await sbClient.auth.signInWithOtp({ phone });
-    if (error) throw error;
-    const otp = prompt('کد تأیید پیامک‌شده را وارد کنید:');
-    if (otp === null) return false;
-    const {error: verifyError} = await sbClient.auth.verifyOtp({ phone, token:String(otp).trim(), type:'sms' });
-    if (verifyError) throw verifyError;
-    return !!(await getCurrentUser());
+    localStorage.setItem('deco_sun_customer_phone', phone);
+    let { data: sessionData } = await sbClient.auth.getSession();
+    if (!sessionData?.session) {
+      const { data, error } = await sbClient.auth.signInAnonymously();
+      if (error) throw error;
+      sessionData = data;
+    }
+    const user = sessionData?.user || (await getCurrentUser());
+    if (!user) throw new Error('ورود انجام نشد. Anonymous Sign-Ins را در Supabase فعال کنید.');
+    try { await sbClient.from('profiles').upsert({ id:user.id, phone:phone }, { onConflict:'id' }); } catch(e) { console.warn('Profile phone save skipped:', e); }
+    return true;
   }catch(err){
-    console.error('OTP login error', err);
+    console.error('Direct phone login error', err);
     alert('ورود انجام نشد:\n' + (err.message || 'خطای نامشخص'));
     return false;
   }finally{ _authBusy = false; }
 }
-async function requireLogin(callback){
+function requireLogin(callback){
   const user = await getCurrentUser();
   if (user) { if (typeof callback === 'function') return callback(user); return true; }
   const ok = await loginWithOtp();
