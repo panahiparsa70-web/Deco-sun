@@ -1,0 +1,19 @@
+{
+  "name": "DECO SUN — Surface of Dreams",
+  "short_name": "DECO SUN",
+  "description": "طراحی داخلی و کابینت‌سازی، از ایده تا واقعیت",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F1EA",
+  "theme_color": "#C89B5A",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
